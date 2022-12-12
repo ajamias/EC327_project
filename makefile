@@ -7,7 +7,7 @@ OBJS = main.o Textbox.o Input.o Button.o
 project: $(OBJS)
 	export LD_LIBRARY_current_path=$(current_path)/SFML/lib
 	$(GCC) $(OBJS) -o project -L$(current_path)/SFML/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network
-	./project
+	
 
 Textbox.o: Textbox.cpp Textbox.h
 	$(GCC) -c Textbox.cpp -I$(current_path)/SFML/include -o Textbox.o
@@ -24,6 +24,7 @@ main.o: main.cpp Textbox.h Input.h Button.h
 run:
 	echo $(current_path)
 	./project
+	rm *.o project
 
 clear:
 	rm *.o project

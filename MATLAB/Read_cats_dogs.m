@@ -2,7 +2,7 @@
 % Reads in all images in catsfolder/ and dogsfolder/.
 % Each 64 x 64 image is reshaped into a length-4096 row vector.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [cats, dogs] = Read_cats_dogs
+function [cats, dogs] = Read_cats_dogs(fpath1, fpath2)
     catsfolder = 'catsfolder/'; 
     catfiles = dir(fullfile(catsfolder, '*.jpg')); 
     catfilenames = {catfiles.name};

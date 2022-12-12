@@ -1,6 +1,7 @@
+function Main(filepath1, filepath2)
 % Read cats and dogs data.
-userpath("Users/austin/Desktop/EC327_project")
-[cats, dogs] = Read_cats_dogs;
+userpath("/Users/austin/Desktop/EC327_project/MATLAB")
+[cats, dogs] = Read_cats_dogs(filepath1, filepath2);
 num_cats = size(cats,1);
 num_dogs = size(dogs,1);
 
@@ -150,5 +151,6 @@ end
 catstring = sprintf('The fraction of cat images misclassified by the closest average is %.2g.',cat_error_rate);
 dogstring = sprintf('The fraction of dog images misclassified by the closest average is %.2g.',dog_error_rate);
 
-
+mv *.png ./../images
 userpath('reset')
+end
