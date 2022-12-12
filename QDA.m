@@ -1,8 +1,10 @@
-%This function takes in a data matrix Xrun as well the mean vectors mu0, mu1 
-%and the covariance matrices sigma0, sigma1 estimated from the training data
-%and produces a column vector guesses, corresponding to the ML rule for Gaussian vectors
-%with different means and different covariance matrices, which is referred to as 
-%Quadratic Discriminant Analysis (QDA) in machine learning.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Takes in a data matrix Xrun as well the mean vectors mu0, mu1 and the
+% covariance matrices sigma0, sigma1 estimated from the training data.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Produces a column vector guesses, corresponding to the ML rule for
+% gaussian vectors with different means and different covariance matrices.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function guesses = QDA(Xrun,mu0,mu1,sigma0,sigma1)
 sigma0_inv = pinv(sigma0);
 sigma1_inv = pinv(sigma1);

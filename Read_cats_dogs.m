@@ -1,5 +1,7 @@
-% Reads in all images in catsfolder/ and dogsfolder/. 
-% Each 64 x 64 image is reshaped into a length-4096 row vector. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Reads in all images in catsfolder/ and dogsfolder/.
+% Each 64 x 64 image is reshaped into a length-4096 row vector.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [cats, dogs] = Read_cats_dogs
     catsfolder = 'catsfolder/'; 
     catfiles = dir(fullfile(catsfolder, '*.jpg')); 
@@ -26,8 +28,6 @@ function [cats, dogs] = Read_cats_dogs
         dogvectemp = reshape(dogimagetemp,1,4096);
         dogs = [dogs ; dogvectemp];
     end
-    
-    doglabels = ones(numdogs,1);
     
     cats = double(cats);
     dogs = double(dogs);
