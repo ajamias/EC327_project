@@ -1,3 +1,4 @@
+userpath("/Users/austin/Desktop/EC327_project/")
 % read cats and dogs data.
 [cats, dogs] = Read_cats_dogs;
 num_cats = size(cats,1);
@@ -46,3 +47,5 @@ catstring = sprintf('The fraction of cat images misclassified by the closest ave
 disp(catstring)
 dogstring = sprintf('The fraction of dog images misclassified by the closest average is %.2g.',dog_error_rate);
 disp(dogstring) 
+
+userpath('reset')
