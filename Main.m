@@ -1,16 +1,3 @@
-% Split the data into numfolds equal-sized segments. 
-numfolds = 5;
-
-% Dimensions to try for PCA Dimensionality reduction.
-kvalues = [10 25 50 100 250 500]; 
-numkvalues = length(kvalues);
-
-% Initialize arrays to store error rate estimates.
-train_error_LDA = zeros(numfolds,length(kvalues));
-test_error_LDA = zeros(numfolds,length(kvalues));
-train_error_QDA = zeros(numfolds,length(kvalues));
-test_error_QDA = zeros(numfolds,length(kvalues));
-
 % Read cats and dogs data.
 [cats, dogs] = Read_cats_dogs;
 num_cats = size(cats,1);
@@ -28,6 +15,11 @@ else
     error("cats and dogs have a different number of columns.")
 end
 
+% Split the data into numfolds equal-sized segments. 
+numfolds = 5;
+kvalues = [10 25 50 100 250 500]; 
+numkvalues = length(kvalues);
+
 % Create data matrix and label vector.
 datamatrix = [cats;dogs];
 labelvector = [zeros(n0,1);ones(n1,1)];
@@ -35,8 +27,16 @@ labelvector = [zeros(n0,1);ones(n1,1)];
 % Randomly permute dataset
 permutation = randperm(n);
 
+% Initialize arrays to store error rate estimates.
+% LDA Train Error
+train_error_LDA = zeros(numfolds,length(kvalues));
+test_error_LDA = zeros(numfolds,length(kvalues));
+
+% QDA Train Error
+train_error_QDA = zeros(numfolds,length(kvalues));
+test_error_QDA = zeros(numfolds,length(kvalues));
+
 for m = 1:numfolds
-    fprintf('Fold %g out of %g.\n',m,numfolds);
     permshift = circshift(permutation,floor(n*m/numfolds));
     dataperm = datamatrix(permshift,:);
     labelperm = labelvector(permshift,:);
@@ -57,8 +57,7 @@ for m = 1:numfolds
     [V, D] = eig(sigma);
     
     for j = 1:numkvalues
-        k = kvalues(j); % Dimensionality reduction parameter.
-        fprintf('Trying dimension %g.\n',k);
+        k = kvalues(j);     % Dimensionality reduction parameter.
 
         % Reduce dataset from d to k dimensions using PCA.
         Xtrain_reduced = Dimensionality_reduction(Xtrain,mu,V,D,k);
@@ -89,7 +88,7 @@ for m = 1:numfolds
     end
 end
 
-% split dataset into training and test data.
+% Split dataset into training and test data.
 cats_train = cats(1:floor(num_cats/2),:);
 cats_test = cats(floor(num_cats/2)+1:num_cats,:);
 dogs_train = dogs(1:floor(num_dogs/2),:);
@@ -103,17 +102,20 @@ avg_dog = Vector_average(dogs_train);
 
 f = figure;
 
+figure(1)
 Show_image(avg_cat,1);
 title('Average Cat');
 exportgraphics(f, 'AvgCat.png', 'Resolution', 300);
+hold off
 
+figure(2)
 Show_image(avg_dog,1);
 title('Average Dog');
 exportgraphics(f, 'AvgDog.png', 'Resolution', 300);
+hold off
 
 % Plot average training and testing error rates for LDA and QDA.
-%figure(1)
-hold off
+figure(3)
 plot(kvalues,mean(train_error_LDA),'ro-','linewidth',2,'MarkerSize',10)
 hold on
 plot(kvalues,mean(test_error_LDA),'rx-','linewidth',2,'MarkerSize',10)
@@ -124,10 +126,12 @@ ylabel('Error Rate')
 legend('LDA Training Error','LDA Testing Error','QDA Training Error','QDA Testing Error')
 set(gca,'FontSize',16)
 exportgraphics(f, 'ErrorRate.png', 'Resolution', 300);
+hold off
 
-% classify test images.
+% Classify test images.
 cat_test_guesses = zeros(num_cats_test,1);
 dog_test_guesses = zeros(num_dogs_test,1);
+
 for i = 1:num_cats_test
     current_cat = cats_test(i,:);
     cat_test_guesses(i) = Classifier(current_cat,avg_cat,avg_dog);
@@ -141,8 +145,6 @@ end
 % Calculate the fraction of cat and dog images that are misclassified by our simple "closest-average" classifier.
 [cat_error_rate, dog_error_rate] = Error_rate(cat_test_guesses,dog_test_guesses);
 
-% Print fractions to the display.
+% Display error rate
 catstring = sprintf('The fraction of cat images misclassified by the closest average is %.2g.',cat_error_rate);
-disp(catstring)
 dogstring = sprintf('The fraction of dog images misclassified by the closest average is %.2g.',dog_error_rate);
-disp(dogstring) 

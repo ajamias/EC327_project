@@ -1,4 +1,6 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Takes in a data matrix and outputs the average row vector.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function row_avg = Vector_average(datamatrix)
     [m,~] = size(datamatrix);       % m is a row, n is a column
     row_avg = sum(datamatrix)/m;    % sum(A) returns sum of each column in matrix

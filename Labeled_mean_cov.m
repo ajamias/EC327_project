@@ -1,10 +1,11 @@
-%This function takes in a data matrix X, corresponding vector 
-%of labels Y, and a desired label. It outputs the the number 
-%of samples with desiredlabel as n_label as well as the sample
-%mean vector mu_label (as a row vector) and sample covariance 
-%matrix sigma_label for the data in X whose labels in Y are equal
-%to the desired label.
-function [n_label,mu_label,sigma_label] = labeled_mean_cov(X,Y,desiredlabel)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Takes in a data matrix X, corresponding vector of labels Y, and a desired label.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Outputs the the number of samples with desiredlabel as n_label as well as
+% the sample mean vector mu_label and sample covariance matrix sigma_label
+% for the data in X whose labels in Y are equal to the desired label.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function [n_label,mu_label,sigma_label] = Labeled_mean_cov(X,Y,desiredlabel)
     [n, d] = size(X);
     
     X_desired = zeros(1, d);
