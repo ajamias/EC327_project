@@ -2,40 +2,21 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
+#include "Textbox.h"
+#include "Input.h"
+#include "Button.h"
 
 #define max_window_x
 // use https://github.com/lava/matplotlib-cpp for c++ graph visualisation
 
-class Textbox: public sf::Drawable, public sf::Transformable {
-public:
-	Textbox() {}
-	Textbox(sf::String& string,
-		sf::Font& font,
-		sf::Vector2f& position,
-		unsigned int max_length,
-		unsigned int char_size = 30):
-		text(string.substring(0, max_length), font, char_size) {
-		text.setFillColor(sf::Color::White);
-		text.setPosition(position);
-		box.setSize(sf::Vector2f(max_length * char_size / 1.65, char_size * 5.3/4));
-		box.setPosition(position);
-		box.setFillColor(sf::Color::Black);
-		box.setOutlineThickness(1);
-		box.setOutlineColor(sf::Color::White);
+void enterText(unsigned int unicode, Input*& current_input) {
+	if (unicode > 127) return;
+	if (unicode == 8) {
+		if (current_input->getSize() > 1) current_input->pop_back();
+	} else if (current_input != nullptr && current_input->getSize() < 41) {
+		current_input->append(static_cast<sf::String> (unicode));
 	}
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const {
-		target.draw(box, states);
-		target.draw(text, states);
-	}
-	void setBoxColor(sf::Color color) {
-		box.setFillColor(color);
-	}
-private:
-	sf::Text text;
-	sf::RectangleShape box;
-};
-
-
+}
 
 int main() {
 
@@ -43,49 +24,60 @@ int main() {
 
 	window.setFramerateLimit(60);
 	
-	sf::Texture texture;
-	sf::Sprite sprite;
-	texture.loadFromFile("pants.png");
-	sprite.setTexture(texture);
-	sprite.setPosition(1401, 116);
+//	sf::Texture texture;
+//	sf::Sprite sprite;
+//	texture.loadFromFile("pants.png");
+//	sprite.setTexture(texture);
+//	sprite.setPosition(1401, 116);
 
 	sf::String directory1_text, directory2_text;
 	sf::String empty;
-	sf::Text directory1, directory2;
 	sf::Font font;
 	font.loadFromFile("./Fonts/CourierPrime-Regular.ttf");
 
+	Input directory1(font, sf::Vector2f(645, 50), 41);
 
-	directory1.setFont(font);
-	directory1.setFillColor(sf::Color::White);
-	directory1.setPosition(645, 50);
-
-	directory2.setFont(font);
-	directory2.setFillColor(sf::Color::White);
-	directory2.setPosition(645, 100);
+	Input directory2(font, sf::Vector2f(645, 100), 41);
 	
-
 	sf::String temp_text("Enter directories of files containing image data:");
-	sf::Vector2f temp_vec(500, 0);
-	Textbox temp(temp_text, font, temp_vec, temp_text.getSize());
-	
-	sf::String fileLabelText_1("file 0:");
-	sf::Vector2f fileLabelPosition_1(500, 50);
-	Textbox fileLabel_1(fileLabelText_1, font, fileLabelPosition_1, fileLabelText_1.getSize());
+	Textbox temp(	temp_text,
+			font, 
+			sf::Vector2f(500, 0), 
+			temp_text.getSize());
 
-	sf::Vector2f fileTextPosition_1(645, 50);
-	Textbox fileText_1(empty, font, fileTextPosition_1, 41);
+	sf::String labels_text("Labels:");
+	Textbox labels(	labels_text, 
+			font, 
+			sf::Vector2f(1400, 0), 
+			labels_text.getSize());
+	
+	Input label1(font, sf::Vector2f(1400, 50), labels_text.getSize());
+
+	Input label2(font, sf::Vector2f(1400, 100), labels_text.getSize());
+
+	sf::String fileLabelText_1("file 0:");
+	Textbox fileLabel_1(	fileLabelText_1, 
+				font, 
+				sf::Vector2f(500, 50), 
+				fileLabelText_1.getSize());
 
 	sf::String fileLabelText_2("file 1:");
-	sf::Vector2f fileLabelPosition_2(500, 100);
-	Textbox fileLabel_2(fileLabelText_2, font, fileLabelPosition_2, fileLabelText_2.getSize());
+	Textbox fileLabel_2(	fileLabelText_2, 
+				font, 
+				sf::Vector2f(500, 100), 
+				fileLabelText_2.getSize());
 	
-	sf::Vector2f fileTextPosition_2(645, 100);
-	Textbox fileText_2(empty, font, fileTextPosition_2, 41);
+	sf::String button1_text("train!");
+	Button button1(button1_text,
+			font,
+			sf::Vector2f(1600, 75),
+			button1_text.getSize());
+	button1.setBoxColor(sf::Color::White);
+	button1.setTextColor(sf::Color::Black);
 
-	bool text_select = true;
-	directory1_text += "_";
-	directory1.setString(directory1_text);
+	
+
+	Input* current_input = nullptr;
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -95,50 +87,18 @@ int main() {
 					window.close();
 					break;
 				case (sf::Event::TextEntered):
-					if (event.text.unicode < 128) {
-						if (event.text.unicode == 10) {
-							
-						} else if (event.text.unicode == 9) {
-							text_select = !text_select;
-							if (text_select) {
-								directory1_text += "_";
-								directory2_text.erase(directory2_text.getSize() - 1);
-							} else {
-								directory2_text += "_";
-								directory1_text.erase(directory1_text.getSize() - 1);
-							}
-						}
-						else if (text_select) {
-							if (event.text.unicode == 8 && directory1_text.getSize() > 1) {
-								directory1_text.erase(directory1_text.getSize() - 2);
-							} else if (event.text.unicode != 8 && directory1_text.getSize() < 41) {
-								directory1_text.insert(directory1_text.getSize() - 1, event.text.unicode);
-							}
-						} else {
-							if (event.text.unicode == 8 && directory2_text.getSize() > 1) {
-								directory2_text.erase(directory2_text.getSize() - 2);
-							} else if (event.text.unicode != 8 && directory2_text.getSize() < 41) {
-								directory2_text.insert(directory2_text.getSize() - 1, event.text.unicode);
-							}
-						}
-						directory1.setString(directory1_text);
-						directory2.setString(directory2_text);
-					}
-					std::cout << event.text.unicode << std::endl;
+					enterText(event.text.unicode, current_input);
 					break;
 				case (sf::Event::MouseButtonPressed):
 					if (event.mouseButton.button == sf::Mouse::Left) {
-						if (	sf::Mouse::getPosition(window).x >= 645 && sf::Mouse::getPosition(window).x <= 1390 &&
-							sf::Mouse::getPosition(window).y >= 50 && sf::Mouse::getPosition(window).y <= 87) {
-							text_select = true;
-							directory1_text += "_";
-							directory2_text.erase(directory2_text.getSize() - 1);
-						} else if (sf::Mouse::getPosition(window).x >= 645 && sf::Mouse::getPosition(window).x <= 1390 &&
-							   sf::Mouse::getPosition(window).y >= 100 && sf::Mouse::getPosition(window).y <= 137) {
-							text_select = false;
-							directory2_text += "_";
-							directory1_text.erase(directory1_text.getSize() - 1);
-						}
+						sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+						directory1.clickCheck(mouse_pos, current_input);
+						directory2.clickCheck(mouse_pos, current_input);
+						label1.clickCheck(mouse_pos, current_input);
+						label2.clickCheck(mouse_pos, current_input);
+						if (button1.clickCheck(mouse_pos)) {
+							std::cout << "clicked" << std::endl;
+						}					
 					}
 					break;
 				default:
@@ -149,18 +109,18 @@ int main() {
 		window.setActive();
 
 		window.clear();
-		window.draw(sprite);
 		window.draw(fileLabel_1);
-		window.draw(fileText_1);
 		window.draw(fileLabel_2);
-		window.draw(fileText_2);
 		window.draw(directory1);
 		window.draw(directory2);
 		window.draw(temp);
+		window.draw(labels);
+		window.draw(label1);
+		window.draw(label2);
+		window.draw(button1);
 
 		window.display();
 
 	}
 
-	return 0;
-}
+	return 0;}
