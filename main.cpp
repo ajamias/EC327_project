@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <filesystem>
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -6,8 +8,14 @@
 #include "Input.h"
 #include "Button.h"
 
-#define max_window_x
-// use https://github.com/lava/matplotlib-cpp for c++ graph visualisation
+namespace fs = std::filesystem;
+
+#define max_window_x 2000
+#define max_window_y 1000
+
+std::fstream file1;
+std::fstream file2;
+
 
 void enterText(unsigned int unicode, Input*& current_input) {
 	if (unicode > 127) return;
@@ -18,9 +26,25 @@ void enterText(unsigned int unicode, Input*& current_input) {
 	}
 }
 
+void processFiles(sf::String filename1, sf::String filename2) {
+	if (!filename1.isEmpty() && !filename2.isEmpty()) {
+		file1.open(filename1.toAnsiString(), std::fstream::in);
+		file2.open(filename2.toAnsiString(), std::fstream::in);
+		
+	}
+	std::cout << "processed files" << std::endl;
+	std::cout << fs::current_path() << std::endl;
+	std::string command;
+	command.append("cd ");
+	command.append(fs::current_path());
+	command.append("; /Applications/MATLAB_R2021a.app/bin/matlab nodisplay -nosplash -nodesktop < Main.m");
+	
+	system(command.c_str());
+}
+
 int main() {
 
-	sf::RenderWindow window(sf::VideoMode(2000, 1000), "PANTS!");//, sf::Style::Titlebar | sf::Style::Close);
+	sf::RenderWindow window(sf::VideoMode(max_window_x, max_window_y), "PANTS!");//, sf::Style::Titlebar | sf::Style::Close);
 
 	window.setFramerateLimit(60);
 	
@@ -29,6 +53,9 @@ int main() {
 //	texture.loadFromFile("pants.png");
 //	sprite.setTexture(texture);
 //	sprite.setPosition(1401, 116);
+
+	void (*fptr) (sf::String, sf::String);
+	fptr = &processFiles;
 
 	sf::String directory1_text, directory2_text;
 	sf::String empty;
@@ -39,11 +66,11 @@ int main() {
 
 	Input directory2(font, sf::Vector2f(645, 100), 41);
 	
-	sf::String temp_text("Enter directories of files containing image data:");
-	Textbox temp(	temp_text,
+	sf::String prompt_text("Enter directories of files containing image data:");
+	Textbox prompt(	prompt_text,
 			font, 
 			sf::Vector2f(500, 0), 
-			temp_text.getSize());
+			prompt_text.getSize());
 
 	sf::String labels_text("Labels:");
 	Textbox labels(	labels_text, 
@@ -68,7 +95,7 @@ int main() {
 				fileLabelText_2.getSize());
 	
 	sf::String button1_text("train!");
-	Button button1(button1_text,
+	Button button1( button1_text,
 			font,
 			sf::Vector2f(1600, 75),
 			button1_text.getSize());
@@ -98,6 +125,7 @@ int main() {
 						label2.clickCheck(mouse_pos, current_input);
 						if (button1.clickCheck(mouse_pos)) {
 							std::cout << "clicked" << std::endl;
+							processFiles(directory1.getString(), directory2.getString());
 						}					
 					}
 					break;
@@ -107,13 +135,13 @@ int main() {
 		}
 
 		window.setActive();
-
 		window.clear();
+
 		window.draw(fileLabel_1);
 		window.draw(fileLabel_2);
 		window.draw(directory1);
 		window.draw(directory2);
-		window.draw(temp);
+		window.draw(prompt);
 		window.draw(labels);
 		window.draw(label1);
 		window.draw(label2);

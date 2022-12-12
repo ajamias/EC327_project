@@ -35,3 +35,12 @@ void Textbox::setBoxColor(sf::Color color) {
 void Textbox::setTextColor(sf::Color color) {
 	text.setFillColor(color);
 }
+
+bool Textbox::isEmpty() {
+	if (string.getSize() == 1) return true;
+	return false;
+}
+
+sf::String Textbox::getString() {
+	return string;
+}

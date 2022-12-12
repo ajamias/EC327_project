@@ -14,6 +14,8 @@ public:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const;
         void setBoxColor(sf::Color color);
 	void setTextColor(sf::Color color);
+	bool isEmpty();
+	sf::String getString();
 protected:
         sf::String string;
         sf::Font font;

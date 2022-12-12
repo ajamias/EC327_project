@@ -1,12 +1,12 @@
-GCC = g++
+GCC = g++ -std=c++17
 
 current_path = $(shell pwd)
 
 OBJS = main.o Textbox.o Input.o Button.o
 
 project: $(OBJS)
-	$(GCC) $(OBJS) -o project -L$(current_path)/SFML/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network
 	export LD_LIBRARY_current_path=$(current_path)/SFML/lib
+	$(GCC) $(OBJS) -o project -L$(current_path)/SFML/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network
 	./project
 
 Textbox.o: Textbox.cpp Textbox.h
