@@ -21,25 +21,34 @@ void enterText(unsigned int unicode, Input*& current_input) {
 	if (unicode > 127) return;
 	if (unicode == 8) {
 		if (current_input->getSize() > 1) current_input->pop_back();
-	} else if (current_input != nullptr && current_input->getSize() < 41) {
+	} else if (current_input != nullptr) { //&& current_input->getSize() < 41) {
 		current_input->append(static_cast<sf::String> (unicode));
 	}
 }
 
 void processFiles(sf::String filename1, sf::String filename2) {
+	std::string command;
+	command.append("cd ./MATLAB");
 	if (!filename1.isEmpty() && !filename2.isEmpty()) {
 		file1.open(filename1.toAnsiString(), std::fstream::in);
 		file2.open(filename2.toAnsiString(), std::fstream::in);
-		
+/*
+		command.append(" && /Applications/MATLAB_R2021a.app/bin/matlab -nodisplay -nosplash -nodesktop -r \"run('Main.m('");
+		command.append(filename1);
+		command.append("', '");
+		command.append(filename2);
+		command.append("')'); exit;\"");
+		system(command.c_str());
+		system("cd ./..");
+*/		
+	} else {
+		//command.append(fs::current_path());
+		//command.append("/MATLAB");
+		command.append(" && /Applications/MATLAB_R2021a.app/bin/matlab -nodisplay -nosplash -nodesktop -r \"run('Main.m'); exit;\"");
+		system(command.c_str());
+		system("cd ./..");
 	}
-	std::cout << "processed files" << std::endl;
-	std::cout << fs::current_path() << std::endl;
-	std::string command;
-	command.append("cd ");
-	command.append(fs::current_path());
-	command.append("; /Applications/MATLAB_R2021a.app/bin/matlab nodisplay -nosplash -nodesktop < ./MATLAB/Main.m");
-	
-	system(command.c_str());
+	command.clear();
 }
 
 int main() {
@@ -54,8 +63,22 @@ int main() {
 //	sprite.setTexture(texture);
 //	sprite.setPosition(1401, 116);
 
-	void (*fptr) (sf::String, sf::String);
-	fptr = &processFiles;
+//	void (*fptr) (sf::String, sf::String);
+//	fptr = &processFiles;
+
+	sf::Texture img1, img2, img3;
+	sf::Sprite sp1, sp2, sp3;
+	sp1.setOrigin(sf::Vector2f(1376/2, 1426/2));
+	sp2.setOrigin(sf::Vector2f(1376/2, 1425/2));
+	sp3.setOrigin(sf::Vector2f(1944/2, 1490/2));
+	sp1.setPosition(sf::Vector2f(max_window_x/5.0, max_window_y * 2.0/3));
+	sp2.setPosition(sf::Vector2f(max_window_x * 1/2.0, max_window_y * 2.0/3));
+	sp3.setPosition(sf::Vector2f(max_window_x * 4/5.0, max_window_y * 2.0/3));
+	sp1.setScale(sf::Vector2f(0.25, 0.25));
+	sp2.setScale(sf::Vector2f(0.25, 0.25));
+	sp3.setScale(sf::Vector2f(0.25, 0.25));
+	//1376 × 1426, 1376 × 1425, 1944 × 1490 pixels
+
 
 	sf::String directory1_text, directory2_text;
 	sf::String empty;
@@ -124,8 +147,14 @@ int main() {
 						label1.clickCheck(mouse_pos, current_input);
 						label2.clickCheck(mouse_pos, current_input);
 						if (button1.clickCheck(mouse_pos)) {
-							std::cout << "clicked" << std::endl;
-							processFiles(directory1.getString(), directory2.getString());
+							button1.setBoxColor(sf::Color::Yellow);
+						//	processFiles(directory1.getString(), directory2.getString());
+							img1.loadFromFile("./images/AvgCat.png");
+							img2.loadFromFile("./images/AvgDog.png");
+							img3.loadFromFile("./images/ErrorRate.png");
+							sp1.setTexture(img1);
+							sp2.setTexture(img2);
+							sp3.setTexture(img3);
 						}					
 					}
 					break;
@@ -146,6 +175,9 @@ int main() {
 		window.draw(label1);
 		window.draw(label2);
 		window.draw(button1);
+		window.draw(sp1);
+		window.draw(sp2);
+		window.draw(sp3);
 
 		window.display();
 

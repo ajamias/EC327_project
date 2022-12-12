@@ -1,7 +1,6 @@
-function Main(filepath1, filepath2)
 % Read cats and dogs data.
-userpath("/Users/austin/Desktop/EC327_project/MATLAB")
-[cats, dogs] = Read_cats_dogs(filepath1, filepath2);
+
+[cats, dogs] = Read_cats_dogs;
 num_cats = size(cats,1);
 num_dogs = size(dogs,1);
 
@@ -102,18 +101,17 @@ num_dogs_test = size(dogs_test,1);
 avg_cat = Vector_average(cats_train);
 avg_dog = Vector_average(dogs_train);
 
-f = figure;
 
 figure(1)
 Show_image(avg_cat,1);
 title('Average Cat');
-exportgraphics(f, 'AvgCat.png', 'Resolution', 300);
+exportgraphics(figure(1), 'AvgCat.png', 'Resolution', 300);
 hold off
 
 figure(2)
 Show_image(avg_dog,1);
 title('Average Dog');
-exportgraphics(f, 'AvgDog.png', 'Resolution', 300);
+exportgraphics(figure(2), 'AvgDog.png', 'Resolution', 300);
 hold off
 
 % Plot average training and testing error rates for LDA and QDA.
@@ -127,7 +125,7 @@ xlabel('Dimension k')
 ylabel('Error Rate')
 legend('LDA Training Error','LDA Testing Error','QDA Training Error','QDA Testing Error')
 set(gca,'FontSize',16)
-exportgraphics(f, 'ErrorRate.png', 'Resolution', 300);
+exportgraphics(figure(3), 'ErrorRate.png', 'Resolution', 300);
 hold off
 
 % Classify test images.
@@ -151,6 +149,4 @@ end
 catstring = sprintf('The fraction of cat images misclassified by the closest average is %.2g.',cat_error_rate);
 dogstring = sprintf('The fraction of dog images misclassified by the closest average is %.2g.',dog_error_rate);
 
-mv *.png ./../images
-userpath('reset')
-end
+system("mv *.png ./../images");

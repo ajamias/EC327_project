@@ -1,4 +1,5 @@
 #include "Input.h"
+#include <iostream>
 
 Input::Input(): Textbox() {}
 
@@ -36,18 +37,21 @@ void Input::deselect() {
 
 void Input::append(sf::String string) {
 	if (this->string.getSize() < max_length) {
-		if (selected) {
-			this->string.insert(this->string.getSize() - 1, string);
-		} else {
-			this->string += string;
-		}
+		this->string.insert(this->string.getSize() - 1, string);
 		text.setString(this->string);
+	} else if (this->string.getSize() >= max_length) {
+		this->string.insert(this->string.getSize() - 1, string);
+		text.setString(this->string.substring(this->string.getSize() - max_length, max_length));
 	}
 }
 
 void Input::pop_back() {
 	string.erase(string.getSize() - 2);
-	text.setString(string);
+	if (string.getSize() < max_length) {
+		text.setString(string);
+	} else {
+		text.setString(string.substring(string.getSize() - max_length));
+	}
 }
 
 unsigned int Input::getMaxLength() {
