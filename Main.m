@@ -14,12 +14,16 @@ num_dogs_test = size(dogs_test,1);
 % calculate average cat and dogs images on the training data.
 avg_cat = Vector_average(cats_train);
 avg_dog = Vector_average(dogs_train);
-figure(1)
+
+f = figure;
+
 Show_image(avg_cat,1);
-title('Average Cat')
-figure(2)
+title('Average Cat');
+exportgraphics(f, 'AvgCat.png', 'Resolution', 300);
+
 Show_image(avg_dog,1);
-title('Average Dog')
+title('Average Dog');
+exportgraphics(f, 'AvDog.png', 'Resolution', 300);
 
 % classify test images.
 cat_test_guesses = zeros(num_cats_test,1);
