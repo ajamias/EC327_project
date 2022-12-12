@@ -37,7 +37,7 @@ void processFiles(sf::String filename1, sf::String filename2) {
 	std::string command;
 	command.append("cd ");
 	command.append(fs::current_path());
-	command.append("; /Applications/MATLAB_R2021a.app/bin/matlab nodisplay -nosplash -nodesktop < Main.m");
+	command.append("; /Applications/MATLAB_R2021a.app/bin/matlab nodisplay -nosplash -nodesktop < ./MATLAB/Main.m");
 	
 	system(command.c_str());
 }
