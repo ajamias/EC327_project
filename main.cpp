@@ -168,7 +168,7 @@ int main() {
 			button1_text.getSize());
 	button1.setBoxColor(sf::Color::White);
 	button1.setTextColor(sf::Color::Black);
-
+/*
 	sf::String button2_text("Click me!");							// Click me! button
 	Button button2( button2_text,
 			font,
@@ -176,7 +176,7 @@ int main() {
 			button2_text.getSize());
 	button1.setBoxColor(sf::Color::White);
 	button1.setTextColor(sf::Color::Black);
-	
+*/	
 	Textbox error(	sf::String(),
 			font,
 			sf::Vector2f(500, 150),
@@ -284,7 +284,7 @@ int main() {
 		window.draw(label1);
 		window.draw(label2);
 		window.draw(button1);
-		window.draw(button2);
+//		window.draw(button2);
 		window.draw(sp1);
 		window.draw(sp2);
 		window.draw(sp3);
