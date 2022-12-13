@@ -23,10 +23,13 @@ Textbox::Textbox(sf::String string,
 	box.setFillColor(sf::Color::Black);
 	box.setOutlineThickness(1);
 	box.setOutlineColor(sf::Color::White);
+	visible = true;
 }
 void Textbox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-	target.draw(box, states);
-	target.draw(text, states);
+	if (visible) {
+		target.draw(box, states);
+		target.draw(text, states);
+	}
 }
 void Textbox::setBoxColor(sf::Color color) {
 	box.setFillColor(color);
@@ -43,4 +46,28 @@ bool Textbox::isEmpty() {
 
 sf::String Textbox::getString() {
 	return string;
+}
+
+void Textbox::changeString(sf::String string) {
+	this->string = string;
+	text.setString(string);
+	max_length = string.getSize();
+	box.setSize(sf::Vector2f(max_length * char_size / 1.65, char_size * 5.3/4));
+}
+
+void Textbox::setOrigin(sf::Vector2f position) {
+	text.setOrigin(position);
+	box.setOrigin(position);
+}
+
+unsigned int Textbox::getCharSize() {
+	return text.getCharacterSize();
+}
+
+bool Textbox::isVisible() {
+	return visible;
+}
+
+void Textbox::setVisible(bool visibility) {
+	visible = visibility;
 }

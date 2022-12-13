@@ -16,6 +16,11 @@ public:
 	void setTextColor(sf::Color color);
 	bool isEmpty();
 	sf::String getString();
+	void changeString(sf::String string);
+	void setOrigin(sf::Vector2f position);
+	unsigned int getCharSize();
+	bool isVisible();
+	void setVisible(bool visibility);
 protected:
         sf::String string;
         sf::Font font;
@@ -24,6 +29,7 @@ protected:
         unsigned int char_size;
         sf::Text text;
         sf::RectangleShape box;
+	bool visible;
 };
 
 #endif
