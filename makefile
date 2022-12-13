@@ -24,7 +24,6 @@ main.o: main.cpp Textbox.h Input.h Button.h
 run:
 	echo $(current_path)
 	./project
-	rm *.o project
 
 clear:
 	rm *.o project

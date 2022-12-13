@@ -23,6 +23,11 @@ void Input::clickCheck(sf::Vector2i m_pos, Input*& current_input) {
 	}
 }
 
+sf::String Input::getString() {
+	if (selected) return string.substring(0, string.getSize() - 1);
+	return string;
+}
+
 void Input::select() {
 	selected = true;
 	string += "_";

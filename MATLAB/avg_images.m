@@ -1,10 +1,10 @@
 %%Note that you must run this script in a directory that contains folder1folder
 %%and folder2folder as subdirectories.
-function avg_images(folder1, folder2)
+function avg_images(folder1, folder2, m1, n1, m2, n2)
     %Read folder1 and folder2 data.
     %[folder1, folder2] = read_folders(foldername1, foldername2);
-    n_folder1 = size(folder1,1);
-    n_folder2 = size(folder2,1);
+    n_folder1 = size(folder1, 1);
+    n_folder2 = size(folder2, 1);
 
     %Split dataset into training and test data.
     folder1_train = folder1(1:floor(n_folder1/2),:);
@@ -19,11 +19,11 @@ function avg_images(folder1, folder2)
     avg_img1 = Vector_average(folder1_train);
     avg_img2 = Vector_average(folder2_train);
     figure(1)
-    Show_image(avg_img1,1);
+    Show_image(avg_img1,1, m1, n1);
     exportgraphics(figure(1), 'avg1.png', 'Resolution', 300);
     hold off
     figure(2)
-    Show_image(avg_img2,1);
+    Show_image(avg_img2,1, m2, n2);
     exportgraphics(figure(2), 'avg2.png', 'Resolution', 300);
     hold off
 

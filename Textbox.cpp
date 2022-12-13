@@ -1,4 +1,5 @@
 #include "Textbox.h"
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
@@ -40,7 +41,8 @@ void Textbox::setTextColor(sf::Color color) {
 }
 
 bool Textbox::isEmpty() {
-	if (string.getSize() == 1) return true;
+	std::cout << string.getSize() << std::endl;
+	if (string.getSize() == 0 || (string.getSize() == 1 && string[0] == '_')) return true;
 	return false;
 }
 

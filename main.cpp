@@ -26,28 +26,32 @@ void enterText(unsigned int unicode, Input*& current_input) {
 	}
 }
 
-void processFiles(sf::String filename1, sf::String filename2) {
+bool processFiles(sf::String filename1, sf::String filename2) {
 	std::string command;
 	command.append("cd ./MATLAB");
-	if (!filename1.isEmpty() && !filename2.isEmpty()) {
-		file1.open(filename1.toAnsiString(), std::fstream::in);
-		file2.open(filename2.toAnsiString(), std::fstream::in);
-
-		command.append(" && /Applications/MATLAB_R2021a.app/bin/matlab -nodisplay -nosplash -nodesktop -r \"run('Main.m(");
-		command.append(filename1);
-		command.append(", ");
-		command.append(filename2);
-		command.append(")'); exit;\"");
-		std::cout << command << std::endl;
-		system(command.c_str());
-		system("cd ./..");
-		
-	} else {
-		command.append(" && /Applications/MATLAB_R2021a.app/bin/matlab -nodisplay -nosplash -nodesktop -r \"run('avg_images('catsfolder/', 'dogsfolder/')'); run('visualize2d('catsfolder/', 'dogsfolder/')'); run('visualize_error('catsfolder/', 'dogsfolder/')') exit;\"");
-		system(command.c_str());
-		system("cd ./..");
+	if (filename1.isEmpty()) {
+		filename1 = "catsfolder";
+		std::cout << "filename1 empty" << std::endl;
 	}
-	command.clear();
+
+	if (filename2.isEmpty()) {
+		filename2 = "dogsfolder";
+		std::cout << "filename2 empty" << std::endl;
+	}
+
+	command.append(" && /Applications/MATLAB_R2021a.app/bin/matlab -nodisplay -nosplash -nodesktop -r \"main('");
+	command.append(filename1.toAnsiString());
+	command.append("/', '");
+	command.append(filename2.toAnsiString());
+	command.append("/'); exit;\"");
+	/*	
+	} else {
+		command.append(" && /Applications/MATLAB_R2021a.app/bin/matlab -nodisplay -nosplash -nodesktop -r \"main('catsfolder/', 'dogsfolder/');  exit;\"");
+	}
+	*/
+	system(command.c_str());
+	system("cd ./..");
+	return true;
 }
 
 int main() {
@@ -55,6 +59,10 @@ int main() {
 	sf::RenderWindow window(sf::VideoMode(max_window_x, max_window_y), "PANTS!");//, sf::Style::Titlebar | sf::Style::Close);
 
 	window.setFramerateLimit(60);
+
+
+	fs::path path1;
+	fs::path path2;
 	
 //	sf::Texture texture;
 //	sf::Sprite sprite;
@@ -77,7 +85,7 @@ int main() {
 	sp4.setPosition(sf::Vector2f(max_window_x * 6/7.0, max_window_y * 3/4.0));
 	sp1.setScale(sf::Vector2f(0.25, 0.25));
 	sp2.setScale(sf::Vector2f(0.25, 0.25));
-	sp3.setScale(sf::Vector2f(0.23, 0.23));
+	sp3.setScale(sf::Vector2f(0.23, 0.24));
 	sp4.setScale(sf::Vector2f(0.25, 0.25));
 
 
@@ -125,6 +133,21 @@ int main() {
 				avg_text2.getSize());
 	avg_label2.setVisible(false);
 
+	sf::String train_test_text("train/test error");						// train/test error
+	Textbox train_test(	train_test_text,
+				font,
+				sf::Vector2f(sp3.getPosition().x - 223, sp3.getPosition().y - 225),
+				train_test_text.getSize());
+	train_test.setVisible(false);
+
+
+	sf::String scatter_text("reduced to 2 dimensions");						// train/test error
+	Textbox scatter(	scatter_text,
+				font,
+				sf::Vector2f(sp4.getPosition().x - 223, sp4.getPosition().y - 225),
+				scatter_text.getSize());
+	scatter.setVisible(false);
+
 
 	sf::String fileLabelText_1("file 0:");							// file 0:
 	Textbox fileLabel_1(	fileLabelText_1, 
@@ -154,7 +177,12 @@ int main() {
 	button1.setBoxColor(sf::Color::White);
 	button1.setTextColor(sf::Color::Black);
 	
-
+	Textbox error(	sf::String(),
+			font,
+			sf::Vector2f(500, 150),
+			prompt_text.getSize() + 7);
+	error.setTextColor(sf::Color::Red);
+	error.setVisible(false);
 	
 
 	Input* current_input = nullptr;
@@ -177,42 +205,64 @@ int main() {
 						label1.clickCheck(mouse_pos, current_input);
 						label2.clickCheck(mouse_pos, current_input);
 						if (button1.clickCheck(mouse_pos)) {
-							button1.changeString(sf::String("loading..."));
-							button1.setBoxColor(sf::Color::Yellow);
-							window.draw(button1);
-							window.display();
+							path1.clear();
+							path2.clear();
+							if (!directory1.isEmpty()) {
+								path1 = directory1.getString().toAnsiString();
+							}
+							if (!directory2.isEmpty()) {
+								path2 = directory2.getString().toAnsiString();
+							}
 
-							processFiles(directory1.getString(), directory2.getString());
+							if (label1.isEmpty() || label2.isEmpty()) {
+								error.changeString(sf::String("Error: fill both labels"));
+								error.setVisible(true);
+							} else if ((!directory1.isEmpty() && !fs::exists(path1)) || (!directory2.isEmpty() && !fs::exists(path2))) {
+								error.changeString(sf::String("Error: invalid folder path"));
+								error.setVisible(true);
+							} else {
+								error.setVisible(false);
+								avg_label1.setVisible(true);
+								avg_label2.setVisible(true);
+								train_test.setVisible(true);
+								scatter.setVisible(true);
+								button1.changeString(sf::String("loading..."));
+								button1.setBoxColor(sf::Color::Yellow);
+								window.draw(error);
+								window.draw(button1);
+								window.display();
+								current_input->deselect();
+								current_input = nullptr;
+								processFiles(directory1.getString(), directory2.getString());
 
-							img1.loadFromFile("./images/AvgCat.png");
-							img2.loadFromFile("./images/AvgDog.png");
-							img3.loadFromFile("./images/ErrorRate.png");
-							img4.loadFromFile("./images/2D.png");
+								img1.loadFromFile("./images/avg1.png");
+								img2.loadFromFile("./images/avg2.png");
+								img3.loadFromFile("./images/ErrorRate.png");
+								img4.loadFromFile("./images/2D.png");
 
-							sp1.setTexture(img1);
-							sp2.setTexture(img2);
-							sp3.setTexture(img3);
-							sp4.setTexture(img4);
+								sp1.setTexture(img1);
+								sp2.setTexture(img2);
+								sp3.setTexture(img3);
+								sp4.setTexture(img4);
 
-							sf::String temp(label1.getString());
-							if (temp.find("_") != sf::String::InvalidPos) temp.erase(temp.find("_"));
-							avg_text1.insert(avg_text1.getSize() - 1, temp);
-							avg_label1.changeString(avg_text1);
-							avg_label1.setVisible(true);
+								sf::String temp(label1.getString());
+								if (temp.find("_") != sf::String::InvalidPos) temp.erase(temp.find("_"));
+								avg_text1.insert(avg_text1.getSize() - 1, temp);
+								avg_label1.changeString(avg_text1);
 
-							temp = label2.getString();
-							if (temp.find("_") != sf::String::InvalidPos) temp.erase(temp.find("_"));
-							avg_text2.insert(avg_text2.getSize() - 1, temp);
-							avg_label2.changeString(avg_text2);
-							avg_label2.setVisible(true);
+								temp = label2.getString();
+								if (temp.find("_") != sf::String::InvalidPos) temp.erase(temp.find("_"));
+								avg_text2.insert(avg_text2.getSize() - 1, temp);
+								avg_label2.changeString(avg_text2);
 
-							button1.changeString(sf::String("train!"));
-							
-						}/* else if (button2.clickCheck(mouse_pos)) {
-							system("cd ./MATLAB && /Applications/MATLAB_R2021a.app/bin/matlab -nodisplay -nosplash -nodesktop -r \"run('visualize2d.m'); exit;\"");
-							system("cd ./..");
+								avg_label1.setVisible(true);
+								avg_label2.setVisible(true);
+								train_test.setVisible(true);
+								scatter.setVisible(true);
+
+								button1.changeString(sf::String("train!"));
+							}
 						}
-*/
 					}
 					break;
 				default:
@@ -241,6 +291,9 @@ int main() {
 		window.draw(sp4);
 		window.draw(avg_label1);
 		window.draw(avg_label2);
+		window.draw(train_test);
+		window.draw(scatter);
+		window.draw(error);
 
 		window.display();
 

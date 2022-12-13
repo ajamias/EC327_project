@@ -13,6 +13,7 @@ public:
 	void clickCheck(sf::Vector2i m_pos, Input*& current_input);
         void select();
         void deselect();
+	sf::String getString();
         void append(sf::String string);
         void pop_back();
         unsigned int getMaxLength();
